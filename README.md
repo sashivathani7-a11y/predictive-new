@@ -364,7 +364,92 @@ All metrics and diagnostic plots are dynamically generated from holdout predicti
 
 ---
 
-## 21. Example API Request
+## 21. TSFresh Automated Time-Series Feature Engineering & Selection Pipeline
+
+An end-to-end automated feature extraction, statistical cleaning, collinearity filtering, and hypothesis-driven feature selection pipeline powered by **Python TSFresh**.
+
+### 🔍 What is TSFresh?
+**TSFresh** (*Time Series Feature extraction based on scalable hypothesis tests*) is an industrial-grade Python framework that systematically extracts hundreds of temporal, statistical, spectral, and complexity-based characteristics from multi-sensor time-series telemetry.
+
+### 💡 Why Use TSFresh?
+1. **Eliminates Manual Guesswork**: Manual feature engineering on industrial sensors is time-consuming and often misses complex multi-scale dynamics (frequency shifts, higher-order autocorrelation, sample entropy).
+2. **Exhaustive Temporal Characterization**: Automatically computes statistical moments, FFT spectral coefficients, Welch power densities, trend regressions, and change quantiles.
+3. **Hypothesis-Driven Feature Selection**: Employs rigorous statistical significance testing (Mann-Whitney U and Benjamini-Hochberg False Discovery Rate control) to eliminate non-informative noise and retain only discriminative features.
+
+### 📊 Pipeline Workflow
+
+```
+[Raw Multi-Sensor Telemetry (5 Channels)]
+              │
+              ▼
+[Rolling Temporal Windows (W=30, S=15)]
+              │
+              ▼
+[TSFresh Automated Feature Extraction]  ──▶  3,885 Candidate Features
+              │
+              ▼
+[Feature Cleaning & Imputation]         ──▶  1,845 Non-Constant Features (-2,040 constant)
+              │
+              ▼
+[Collinearity Filtering (|r| > 0.95)]   ──▶  1,295 Unique Features (-550 redundant)
+              │
+              ▼
+[Normal vs Anomaly Statistical Testing]  ──▶  Mann-Whitney U + Cohen's d + Mutual Info
+              │
+              ▼
+[TSFresh FDR Hypothesis Selection]      ──▶  Top 25 Highly Discriminative Features
+```
+
+### 🧬 Discovered Feature Categories
+
+| Feature Category | Count | Percentage | Description / Example Attributes |
+| :--- | :---: | :---: | :--- |
+| **Frequency Domain & FFT** | 2,050 | 52.8% | Spectral power, FFT coefficients, Welch density, spectral entropy |
+| **Distribution & Quantiles** | 700 | 18.0% | Quantile boundaries, value recurrence ratio, symmetry index |
+| **Statistical Moments & Energy** | 450 | 11.6% | Mean, standard deviation, skewness, kurtosis, absolute energy |
+| **Trend & Linear Regression** | 220 | 5.7% | Linear trends, chunk-wise standard errors, Dickey-Fuller stationarity |
+| **Autocorrelation & Dynamics** | 145 | 3.7% | Partial autocorrelation, time-reversal asymmetry, non-linear dynamics |
+| **Entropy & Signal Complexity** | 55 | 1.4% | Lempel-Ziv complexity, binned entropy, approximate entropy |
+| **Peaks & Variation** | 45 | 1.2% | Peak counts, variation coefficient, peak intervals |
+
+### 🏆 Top Selected Discriminative Features
+
+The top selected features for distinguishing **NORMAL** from **ANOMALOUS** machine states:
+
+| Rank | Feature Name | Sensor | Cohen's d | Normal Mean | Anomaly Mean | Discriminative Insight |
+| :---: | :--- | :---: | :---: | :---: | :---: | :--- |
+| **1** | `Motor_Current__fft_aggregated__aggtype_"skew"` | Current | **5.76** | 10.16 | 3.24 | Harmonic skewness collapses during mechanical wear |
+| **2** | `Temperature__fft_aggregated__aggtype_"skew"` | Temp | **4.97** | 12.15 | 5.23 | Thermal frequency distribution broadens under stress |
+| **3** | `Motor_Current__variation_coefficient` | Current | **4.68** | 0.01 | 0.07 | Current variance relative to mean surges 7x |
+| **4** | `Pressure__fft_aggregated__aggtype_"skew"` | Pressure | **4.61** | 8.70 | 3.73 | Fluid pressure harmonic distortion |
+| **5** | `Temperature__variance_larger_than_standard_deviation` | Temp | **4.59** | 0.00 | 0.92 | Thermal fluctuations cross critical volatility threshold |
+| **6** | `Motor_Current__percentage_of_reoccurring_values_to_all_values` | Current | **3.91** | 0.49 | 0.09 | Baseline steady-state recurrence degrades into continuous drift |
+| **7** | `Vibration__percentage_of_reoccurring_values_to_all_values` | Vibration | **3.85** | 0.68 | 0.17 | Micro-vibrations transition to continuous wideband oscillation |
+| **8** | `Vibration__standard_deviation` | Vibration | **3.32** | 0.03 | 0.34 | Vibration amplitude standard deviation expands >10x |
+
+### 🚀 Running the Pipeline
+
+To execute the complete reproducible TSFresh pipeline:
+
+```bash
+python tsfresh_features.py --machines 25 --window-size 30 --stride 15
+```
+
+#### Generated Artifacts:
+- **`data/tsfresh/tsfresh_features_full.csv`**: Full candidate feature matrix (3,885 features)
+- **`data/tsfresh/tsfresh_features_cleaned.csv`**: Cleaned, non-constant feature matrix (1,845 features)
+- **`data/tsfresh/tsfresh_features_selected.csv`**: Top 25 selected features for downstream modeling
+- **`data/tsfresh/normal_vs_anomaly_features.csv`**: Comprehensive statistical comparison table
+- **`data/tsfresh/selected_features.txt`**: One-per-line list of final selected feature names
+- **`data/tsfresh/tsfresh_feature_categories.csv`**: Breakdown of generated feature categories
+- **`data/tsfresh/tsfresh_feature_selection_summary.csv`**: Full ranking and hypothesis test results
+- **`outputs/tsfresh/top_features_importance.png`**: Cohen's d effect size bar chart
+- **`outputs/tsfresh/normal_vs_anomaly_distributions.png`**: Boxplots of top feature distributions
+- **`outputs/tsfresh/selected_features_correlation_heatmap.png`**: Correlation heatmap of selected features
+
+---
+
+## 22. Example API Request
 
 ### Predict RUL for Custom Sensor Input:
 ```bash

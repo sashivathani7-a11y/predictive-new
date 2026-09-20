@@ -1,0 +1,9 @@
+feature_category,feature_count,percentage,example_features
+Frequency Domain & FFT,2050,52.77,Temperature__spkt_welch_density__coeff_2 | Temperature__spkt_welch_density__coeff_5
+Distribution & Quantiles,700,18.02,Temperature__percentage_of_reoccurring_values_to_all_values | Temperature__symmetry_looking__r_0.0
+Statistical Moments & Energy,450,11.58,Temperature__variance_larger_than_standard_deviation | Temperature__sum_values
+Trend & Linear Regression,220,5.66,"Temperature__linear_trend__attr_""pvalue"" | Temperature__linear_trend__attr_""rvalue"""
+Other Temporal Characteristics,220,5.66,Temperature__length | Temperature__absolute_sum_of_changes
+Autocorrelation & Dynamics,145,3.73,Temperature__time_reversal_asymmetry_statistic__lag_1 | Temperature__time_reversal_asymmetry_statistic__lag_2
+Entropy & Signal Complexity,55,1.42,Temperature__binned_entropy__max_bins_10 | Temperature__lempel_ziv_complexity__bins_2
+Peaks & Variation,45,1.16,Temperature__has_duplicate_max | Temperature__has_duplicate_min

@@ -70,7 +70,8 @@ industrial-predictive-maintenance/
 │   └── dist/                            # Pre-compiled static assets served by FastAPI
 │
 ├── main.py                              # FastAPI backend application entry point & REST server
-├── requirements.txt                     # Python dependencies (scikit-learn, , fastapi, uvicorn, etc.)
+├── tsfresh_features.py                  # Automated TSFresh time-series feature engineering & selection pipeline
+├── requirements.txt                     # Python dependencies (scikit-learn, tsfresh, fastapi, uvicorn, etc.)
 ├── .gitignore                           # Git ignore rules for clean repository state
 ├── run_backend.bat                      # Windows batch script to launch backend
 ├── run_frontend.bat                     # Windows batch script to launch frontend dev server
